@@ -1,717 +1,175 @@
-/* =========================================================
-   EARLIE JUMPERS LLC
-   JAVASCRIPT
-   ========================================================= */
+const menuToggle = document.getElementById("menuToggle");
+const mainNav = document.getElementById("mainNav");
 
+if (menuToggle) {
+  menuToggle.addEventListener("click", () => {
+    const open = mainNav.classList.toggle("open");
 
-/* =========================================================
-   ELEMENTS
-   ========================================================= */
-
-const themeToggle =
-  document.getElementById("themeToggle");
-
-const menuToggle =
-  document.getElementById("menuToggle");
-
-const mainNav =
-  document.getElementById("mainNav");
-
-const bookingModal =
-  document.getElementById("bookingModal");
-
-const modalOverlay =
-  document.getElementById("modalOverlay");
-
-const modalClose =
-  document.getElementById("modalClose");
-
-const selectedRental =
-  document.getElementById("selectedRental");
-
-const quoteForm =
-  document.getElementById("quoteForm");
-
-const toast =
-  document.getElementById("toast");
-
-const eventDate =
-  document.getElementById("eventDate");
-
-const currentYear =
-  document.getElementById("currentYear");
-
-const modalFormButton =
-  document.getElementById("modalFormButton");
-
-
-/* =========================================================
-   CURRENT YEAR
-   ========================================================= */
-
-if (currentYear) {
-
-  currentYear.textContent =
-    new Date().getFullYear();
-
+    menuToggle.setAttribute("aria-expanded", open);
+    menuToggle.textContent = open ? "×" : "☰";
+  });
 }
 
+// Close mobile menu after clicking a navigation link
+document.querySelectorAll(".main-nav a").forEach((link) => {
+  link.addEventListener("click", () => {
+    mainNav.classList.remove("open");
 
-/* =========================================================
-   LIGHT / DARK MODE
-   ========================================================= */
-
-function updateThemeButton() {
-
-  if (!themeToggle) return;
-
-  const isDark =
-    document.body.classList.contains("dark-mode");
-
-  if (isDark) {
-
-    themeToggle.textContent = "☀️";
-
-    themeToggle.setAttribute(
-      "aria-label",
-      "Switch to light mode"
-    );
-
-    themeToggle.setAttribute(
-      "title",
-      "Switch to light mode"
-    );
-
-  } else {
-
-    themeToggle.textContent = "🌙";
-
-    themeToggle.setAttribute(
-      "aria-label",
-      "Switch to dark mode"
-    );
-
-    themeToggle.setAttribute(
-      "title",
-      "Switch to dark mode"
-    );
-
-  }
-
-}
-
-
-/* Load saved theme */
-
-const savedTheme =
-  localStorage.getItem("earlieJumpersTheme");
-
-
-if (savedTheme === "dark") {
-
-  document.body.classList.add("dark-mode");
-
-}
-
-
-/* If no saved preference, respect device setting */
-
-if (!savedTheme) {
-
-  const prefersDark =
-    window.matchMedia &&
-    window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-
-  if (prefersDark) {
-
-    document.body.classList.add("dark-mode");
-
-  }
-
-}
-
-
-updateThemeButton();
-
-
-/* Toggle */
-
-if (themeToggle) {
-
-  themeToggle.addEventListener(
-    "click",
-    () => {
-
-      document.body.classList.toggle(
-        "dark-mode"
-      );
-
-      const isDark =
-        document.body.classList.contains(
-          "dark-mode"
-        );
-
-      localStorage.setItem(
-        "earlieJumpersTheme",
-        isDark
-          ? "dark"
-          : "light"
-      );
-
-      updateThemeButton();
-
+    if (menuToggle) {
+      menuToggle.setAttribute("aria-expanded", "false");
+      menuToggle.textContent = "☰";
     }
-  );
-
-}
-
-
-/* =========================================================
-   MOBILE MENU
-   ========================================================= */
-
-if (menuToggle && mainNav) {
-
-  menuToggle.addEventListener(
-    "click",
-    () => {
-
-      const isOpen =
-        mainNav.classList.toggle("active");
-
-      menuToggle.setAttribute(
-        "aria-expanded",
-        isOpen
-      );
-
-      menuToggle.textContent =
-        isOpen
-          ? "×"
-          : "☰";
-
-    }
-  );
+  });
+});
 
 
-  /* Close menu after clicking a link */
+// ================================
+// SCROLL ANIMATIONS
+// ================================
 
-  mainNav
-    .querySelectorAll("a")
-    .forEach(
-      link => {
-
-        link.addEventListener(
-          "click",
-          () => {
-
-            mainNav.classList.remove(
-              "active"
-            );
-
-            menuToggle.setAttribute(
-              "aria-expanded",
-              "false"
-            );
-
-            menuToggle.textContent =
-              "☰";
-
-          }
-        );
-
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
       }
-    );
-
-}
-
-
-/* =========================================================
-   BOOKING MODAL
-   ========================================================= */
-
-function openBookingModal(
-  rentalName
-) {
-
-  if (!bookingModal) return;
-
-  selectedRental.textContent =
-    rentalName ||
-    "Rental";
-
-  bookingModal.classList.add(
-    "active"
-  );
-
-  bookingModal.setAttribute(
-    "aria-hidden",
-    "false"
-  );
-
-  document.body.style.overflow =
-    "hidden";
-
-}
-
-
-function closeBookingModal() {
-
-  if (!bookingModal) return;
-
-  bookingModal.classList.remove(
-    "active"
-  );
-
-  bookingModal.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
-  document.body.style.overflow =
-    "";
-
-}
-
-
-/* Rental buttons */
-
-document
-  .querySelectorAll(".book-btn")
-  .forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          const rental =
-            button.dataset.rental;
-
-          openBookingModal(
-            rental
-          );
-
-        }
-      );
-
-    }
-  );
-
-
-/* Close modal */
-
-if (modalClose) {
-
-  modalClose.addEventListener(
-    "click",
-    closeBookingModal
-  );
-
-}
-
-
-if (modalOverlay) {
-
-  modalOverlay.addEventListener(
-    "click",
-    closeBookingModal
-  );
-
-}
-
-
-/* Escape key */
-
-document.addEventListener(
-  "keydown",
-  event => {
-
-    if (
-      event.key === "Escape"
-    ) {
-
-      closeBookingModal();
-
-    }
-
+    });
+  },
+  {
+    threshold: 0.12
   }
 );
 
+document.querySelectorAll(".reveal").forEach((element) => {
+  observer.observe(element);
+});
 
-/* =========================================================
-   MODAL → CONTACT FORM
-   ========================================================= */
 
-if (modalFormButton) {
+// ================================
+// RENTAL / PACKAGE MODAL
+// ================================
 
-  modalFormButton.addEventListener(
-    "click",
-    () => {
+const modal = document.getElementById("bookingModal");
+const modalTitle = document.getElementById("modalTitle");
 
-      closeBookingModal();
+document.querySelectorAll(".book-btn").forEach((button) => {
+  button.addEventListener("click", () => {
+    const rental = button.dataset.rental;
 
-      const contact =
-        document.getElementById(
-          "contact"
-        );
+    modalTitle.textContent = `Interested in ${rental}?`;
 
-      if (contact) {
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+  });
+});
 
-        contact.scrollIntoView({
-          behavior: "smooth"
-        });
+function closeModal() {
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+}
 
-      }
+const modalClose = document.getElementById("modalClose");
 
-      setTimeout(
-        () => {
+if (modalClose) {
+  modalClose.addEventListener("click", closeModal);
+}
 
-          const rentalSelect =
-            document.getElementById(
-              "rentalType"
-            );
-
-          if (
-            rentalSelect &&
-            selectedRental
-          ) {
-
-            const rental =
-              selectedRental.textContent.trim();
-
-            const options =
-              Array.from(
-                rentalSelect.options
-              );
-
-            const matchingOption =
-              options.find(
-                option =>
-                  option.text.trim() ===
-                  rental
-              );
-
-            if (matchingOption) {
-
-              rentalSelect.value =
-                matchingOption.value;
-
-            }
-
-          }
-
-        },
-        500
-      );
-
+if (modal) {
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      closeModal();
     }
-  );
+  });
+}
 
+const modalScroll = document.querySelector(".modal-scroll");
+
+if (modalScroll) {
+  modalScroll.addEventListener("click", closeModal);
 }
 
 
-/* =========================================================
-   DATE PICKER
-   ========================================================= */
+// ================================
+// GALLERY LIGHTBOX
+// ================================
 
-if (eventDate) {
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightboxImg");
 
-  const today =
-    new Date();
+document.querySelectorAll(".gallery-item").forEach((item) => {
+  item.addEventListener("click", () => {
+    const image = item.dataset.img;
 
-  const year =
-    today.getFullYear();
+    lightboxImg.src = image;
+    lightboxImg.alt = item.querySelector("img").alt;
 
-  const month =
-    String(
-      today.getMonth() + 1
-    ).padStart(
-      2,
-      "0"
-    );
+    lightbox.classList.add("open");
+    lightbox.setAttribute("aria-hidden", "false");
+  });
+});
 
-  const day =
-    String(
-      today.getDate()
-    ).padStart(
-      2,
-      "0"
-    );
+function closeLightbox() {
+  lightbox.classList.remove("open");
+  lightbox.setAttribute("aria-hidden", "true");
 
-  eventDate.min =
-    `${year}-${month}-${day}`;
-
+  lightboxImg.src = "";
 }
 
+const lightboxClose = document.getElementById("lightboxClose");
 
-/* =========================================================
-   QUOTE FORM
-   ========================================================= */
+if (lightboxClose) {
+  lightboxClose.addEventListener("click", closeLightbox);
+}
 
-if (quoteForm) {
-
-  quoteForm.addEventListener(
-    "submit",
-    event => {
-
-      event.preventDefault();
-
-      const name =
-        document.getElementById(
-          "name"
-        ).value.trim();
-
-      if (!name) {
-
-        showToast(
-          "Please enter your name."
-        );
-
-        return;
-
-      }
-
-
-      /*
-        This is currently a front-end demo.
-
-        It does NOT send an email.
-
-        For the real Earlie Jumpers website,
-        this can later be connected to:
-        - Formspree
-        - Netlify Forms
-        - EmailJS
-        - a custom backend
-      */
-
-      showToast(
-        `🎉 Thanks ${name}! Jamar can be reached at 765-517-0043.`
-      );
-
-      quoteForm.reset();
-
+if (lightbox) {
+  lightbox.addEventListener("click", (event) => {
+    if (event.target === lightbox) {
+      closeLightbox();
     }
-  );
-
+  });
 }
 
 
-/* =========================================================
-   TOAST
-   ========================================================= */
+// ================================
+// ESCAPE KEY
+// ================================
 
-let toastTimer;
-
-
-function showToast(message) {
-
-  if (!toast) return;
-
-  toast.textContent =
-    message;
-
-  toast.classList.add(
-    "show"
-  );
-
-  clearTimeout(
-    toastTimer
-  );
-
-  toastTimer =
-    setTimeout(
-      () => {
-
-        toast.classList.remove(
-          "show"
-        );
-
-      },
-      4500
-    );
-
-}
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeModal();
+    closeLightbox();
+  }
+});
 
 
-/* =========================================================
-   PHONE NUMBER FORMATTING
-   ========================================================= */
+// ================================
+// QUOTE FORM
+// ================================
 
-const phoneInput =
-  document.getElementById(
-    "phone"
-  );
+const form = document.getElementById("quoteForm");
+const success = document.getElementById("formSuccess");
 
+if (form) {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-if (phoneInput) {
+    success.style.display = "block";
 
-  phoneInput.addEventListener(
-    "input",
-    () => {
+    const submitButton = form.querySelector("button");
 
-      let digits =
-        phoneInput.value
-          .replace(
-            /\D/g,
-            ""
-          )
-          .slice(
-            0,
-            10
-          );
-
-
-      if (digits.length >= 7) {
-
-        phoneInput.value =
-          `(${digits.slice(0,3)}) ` +
-          `${digits.slice(3,6)}-` +
-          `${digits.slice(6)}`;
-
-      } else if (
-        digits.length >= 4
-      ) {
-
-        phoneInput.value =
-          `(${digits.slice(0,3)}) ` +
-          digits.slice(3);
-
-      } else {
-
-        phoneInput.value =
-          digits;
-
-      }
-
+    if (submitButton) {
+      submitButton.textContent = "✓ Request Ready";
     }
-  );
-
+  });
 }
 
 
-/* =========================================================
-   SMOOTH ANCHOR SCROLLING
-   ========================================================= */
+// ================================
+// CURRENT YEAR
+// ================================
 
-document
-  .querySelectorAll(
-    'a[href^="#"]'
-  )
-  .forEach(
-    link => {
+const yearElement = document.getElementById("year");
 
-      link.addEventListener(
-        "click",
-        event => {
-
-          const targetId =
-            link.getAttribute(
-              "href"
-            );
-
-          if (
-            !targetId ||
-            targetId === "#"
-          ) {
-
-            return;
-
-          }
-
-          const target =
-            document.querySelector(
-              targetId
-            );
-
-          if (!target) return;
-
-          event.preventDefault();
-
-          target.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-
-        }
-      );
-
-    }
-  );
-
-
-/* =========================================================
-   HERO / CARD ANIMATION
-   ========================================================= */
-
-const animatedElements =
-  document.querySelectorAll(
-    ".rental-card, .package-card, .review-card, .feature-item"
-  );
-
-
-if (
-  "IntersectionObserver"
-  in window
-) {
-
-  const observer =
-    new IntersectionObserver(
-      entries => {
-
-        entries.forEach(
-          entry => {
-
-            if (
-              entry.isIntersecting
-            ) {
-
-              entry.target.style.opacity =
-                "1";
-
-              entry.target.style.transform =
-                "translateY(0)";
-
-              observer.unobserve(
-                entry.target
-              );
-
-            }
-
-          }
-        );
-
-      },
-      {
-        threshold: 0.12
-      }
-    );
-
-
-  animatedElements.forEach(
-    element => {
-
-      element.style.opacity =
-        "0";
-
-      element.style.transform =
-        "translateY(20px)";
-
-      element.style.transition =
-        "opacity 0.6s ease, transform 0.6s ease";
-
-      observer.observe(
-        element
-      );
-
-    }
-  );
-
+if (yearElement) {
+  yearElement.textContent = new Date().getFullYear();
 }
-
-
-/* =========================================================
-   END
-   ========================================================= */
